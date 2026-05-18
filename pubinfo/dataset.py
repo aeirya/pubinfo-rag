@@ -11,7 +11,7 @@ def load(name: str, columns=DEFAULT_COLUMNS, limit=None):
     df = pd.read_csv(DATA_DIR / f'{name}.csv')
     if columns:
         df = df[columns]
-    if limit:
+    if limit and limit > 0:
         df = df.head(limit)
         
     return df

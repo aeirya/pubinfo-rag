@@ -5,7 +5,7 @@ def default_args():
     return {
         "model": "gemma2:2b",
         "temperature": 0,
-        "num_predict": 10,
+        "num_predict": 30,
         "top_k": 10,
         "top_p": 0.5,
         "keep_alive": "10m",
