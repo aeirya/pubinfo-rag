@@ -1,0 +1,12 @@
+Query:
+{query}
+
+Publication rows:
+{documents}
+
+Instruction:
+Return the numbers of rows that match the query.
+Return NONE if no row matches.
+Do not explain.
+
+Answer:
