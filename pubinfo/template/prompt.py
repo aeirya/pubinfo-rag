@@ -1,5 +1,9 @@
 from pathlib import Path
 
+'''
+module for prompt templates
+'''
+
 def load(templ_name, templ_dir='./templates'):
     matches = list(Path(templ_dir).glob(templ_name))
     if not matches:

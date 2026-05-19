@@ -6,4 +6,5 @@ langchain_community
 rank_bm25
 pandas
 ipykernel
+sentence-transformers
 # requests

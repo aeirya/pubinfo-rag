@@ -1,5 +1,5 @@
 from langchain_core.prompts import PromptTemplate
-import pubinfo
+import pubinfo as pb
 
 def predictor(chain):
     def predict(**kwargs):
@@ -18,10 +18,10 @@ def init(template=None, model=None):
     '''
 
     if template is None:
-        template = pubinfo.template.default()
+        template = pb.prompt.default()
 
     if model is None:
-        model = pubinfo.ollama.init_model()
+        model = pb.ollama.init_model()
 
     prompt = PromptTemplate.from_template(template)
     chain = prompt | model

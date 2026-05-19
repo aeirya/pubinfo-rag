@@ -19,7 +19,7 @@ def __to_text__(df: DataFrame):
     return '\n\n'.join(documents)
 
 
-def format(df):
+def format(df: DataFrame):
     '''
     formats a DataFrame view as a question. e.g.:
 

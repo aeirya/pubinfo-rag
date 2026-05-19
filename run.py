@@ -1,6 +1,7 @@
 import argparse
-import pubinfo
-from pubinfo import dataset, qa, template, ollama, llm
+import pubinfo as pb
+from pubinfo import dataset, ollama, llm
+from pubinfo.template import prompt, qa
 
 def parse_args():
     defaults = ollama.default_args()
@@ -9,7 +10,7 @@ def parse_args():
     parser.add_argument("--query", required=True)
     parser.add_argument("--template", default=None, help="Template glob, e.g. 'rerank*'")
     parser.add_argument("--dataset", default="kmanpub", help="CSV name inside data/publications, without .csv")
-    parser.add_argument("--columns", nargs="+", default=pubinfo.dataset.DEFAULT_COLUMNS)
+    parser.add_argument("--columns", nargs="+", default=dataset.DEFAULT_COLUMNS)
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument('--use_rag', action="store_true", default=True)
 
@@ -26,17 +27,18 @@ def main():
     df = dataset.load(args.dataset, columns=args.columns, limit=args.limit)
     
     if args.use_rag:
-        retriever = pubinfo.bm25(df)
-        hit_df = retriever(args.query)
-        documents = qa.format(hit_df)
-    else:
-        documents = qa.format(df)
+        # retriever = pb.retriever.bm25(df)
+        retriever = pb.retriever.faiss(df, columns=['keywords'])
+        hit_ids = retriever(args.query)
+        df = df.loc[hit_ids]
 
-    prompt_templ = template.load(args.template) if args.template else None
+    documents = qa.format(df)
+
+    prompt_templ = prompt.load(args.template) if args.template else None
     model = ollama.init_model(**dict(args._get_kwargs()))
-    predict = llm.init(prompt_templ, model)
+    generate = llm.init(prompt_templ, model)
     
-    print(predict(query=args.query, documents=documents))
+    print(generate(query=args.query, documents=documents))
 
 if __name__ == "__main__":
     main()
