@@ -6,19 +6,6 @@ from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from .common import doc_ids
 
-def row_to_text(row: Series, columns=None):
-    """
-    Convert one dataframe row to searchable text.
-    Keeps column names, which helps BM25.
-    """
-    if columns is None:
-        columns = list(row.index)
-
-    return "\n".join(
-        f"{col}: {row[col]}"
-        for col in columns
-        if pd.notna(row[col])
-    )
 
 def make_documents(df: DataFrame, columns=None):
     '''
@@ -52,8 +39,8 @@ def retriever(
         df: DataFrame, 
         k=5, 
         columns=None,
-        chunk_size=40, 
-        chunk_overlap=20,
+        chunk_size=800, 
+        chunk_overlap=100,
         bm25_params={"k1": 1.5, "b": 0.85},
         ):
 

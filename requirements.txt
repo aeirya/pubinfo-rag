@@ -7,4 +7,6 @@ rank_bm25
 pandas
 ipykernel
 sentence-transformers
+langchain_huggingface
+faiss-cpu
 # requests

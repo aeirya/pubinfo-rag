@@ -2,13 +2,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
 from pandas import DataFrame, Series
-from .common import doc_ids
-
-def row_to_text(row: Series, columns=None):
-    if columns is None:
-        return str(row)
-    
-    return '\t'.join(str(v) for v in row[columns])
+from .common import doc_ids, row_to_text
 
 def make_documents(df: DataFrame, columns=None):
     return [
