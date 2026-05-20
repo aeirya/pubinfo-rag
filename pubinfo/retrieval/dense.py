@@ -2,7 +2,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
 from pandas import DataFrame, Series
-from .common import doc_ids, row_to_text
+from .include import doc_ids, row_to_text
 
 def make_documents(df: DataFrame, columns=None):
     return [

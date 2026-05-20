@@ -4,7 +4,7 @@ import re
 from langchain_community.retrievers import BM25Retriever
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from .common import doc_ids, row_to_text
+from .include import doc_ids, row_to_text
 
 
 def make_documents(df: DataFrame, columns=None):

@@ -6,11 +6,11 @@ import pandas as pd
 def doc_ids(docs: list[Document]):
     return [doc.metadata["row_id"] for doc in docs]
 
-def init(retriever, ds):
+def build_df_retriver(retriever, df: pd.DataFrame):
     def retrieve(query):
         hits = retriever.invoke(query)
         row_ids = doc_ids(hits)
-        return ds.loc[row_ids]
+        return df.loc[row_ids]
     return retrieve
 
 def row_to_text(row: Series, columns=None, include_column_names=True):

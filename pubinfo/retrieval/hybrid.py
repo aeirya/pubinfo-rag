@@ -21,7 +21,7 @@ def rrf_merge(rankings, rrf_k=60):
     ]
 
 
-def fuse_retrievers(*retrievers, top_k=10, rrf_k=60):
+def merge(*retrievers, top_k=10, rrf_k=60):
     def retrieve(query):
         rankings = [retriever(query) for retriever in retrievers]
         return rrf_merge(rankings, rrf_k=rrf_k)[:top_k]
@@ -50,4 +50,4 @@ def build(
         columns=faiss_cols,
     )
 
-    return fuse_retrievers([bm25, faiss], k, rff_k)
+    return merge([bm25, faiss], k, rff_k)
