@@ -10,4 +10,5 @@ sentence-transformers
 langchain_huggingface
 faiss-cpu
 rapidfuzz
+beautifulsoup4
 # requests

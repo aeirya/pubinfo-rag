@@ -3,6 +3,7 @@ from pathlib import Path
 import json
 from pandas import DataFrame
 
+
 def stringify(dataset: DataFrame):
     data = dataset.apply(lambda x: str(x), axis=1).to_list()
     data = '\n\n'.join(data)

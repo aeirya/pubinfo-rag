@@ -1,4 +1,4 @@
-from pubinfo.retriever import bm25_retriever, faiss_retriever
+from pubinfo.retrieval import build_bm25, build_dense
 
 
 def rrf_merge(rankings, rrf_k=60):
@@ -38,13 +38,13 @@ def build(
     rff_k = 60,
 ):
 
-    bm25 = bm25_retriever(
+    bm25 = build_bm25(
         df=df,
         k=bm25_k,
         columns=bm25_cols,
     )
 
-    faiss = faiss_retriever(
+    faiss = build_dense(
         df=df,
         k=faiss_k,
         columns=faiss_cols,

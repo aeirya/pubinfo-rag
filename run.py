@@ -10,7 +10,7 @@ def parse_args():
     parser.add_argument("--query", required=True)
     parser.add_argument("--template", default=None, help="Template glob, e.g. 'rerank*'")
     parser.add_argument("--dataset", default="kmanpub", help="CSV name inside data/publications, without .csv")
-    parser.add_argument("--columns", nargs="+", default=dataset.DEFAULT_COLUMNS)
+    parser.add_argument("--columns", nargs="+", default=dataset.MORE)
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument('--no_rag', action="store_true", default=False)
 
@@ -27,12 +27,12 @@ def parse_args():
 def main():
     args = parse_args()
 
-    df = dataset.load(args.dataset, columns=args.columns, limit=args.limit)
+    df = dataset.load_db(args.dataset, columns=args.columns, limit=args.limit)
     
     if not args.no_rag:
         bm25 = build_bm25(df, k=5, columns=['title', 'authors', 'abstract', 'keywords'])
         keyword_lookup = build_dense(df, k=5, columns=['keywords'], model_name=args.rag_model)
-        retrieve = merge([bm25, keyword_lookup], rff_k=20 , top_k=5)
+        retrieve = merge(bm25, keyword_lookup, rrf_k=20 , top_k=5)
         
         hit_ids = retrieve(args.query)
         df = df.loc[hit_ids]
