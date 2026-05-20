@@ -1,10 +1,10 @@
-from pandas import DataFrame, Series
+from pandas import DataFrame
 import pandas as pd
 import re
 from langchain_community.retrievers import BM25Retriever
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from .common import doc_ids
+from .common import doc_ids, row_to_text
 
 
 def make_documents(df: DataFrame, columns=None):
@@ -39,8 +39,8 @@ def retriever(
         df: DataFrame, 
         k=5, 
         columns=None,
-        chunk_size=800, 
-        chunk_overlap=100,
+        chunk_size=80, 
+        chunk_overlap=20,
         bm25_params={"k1": 1.5, "b": 0.85},
         ):
 

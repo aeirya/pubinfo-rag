@@ -1,4 +1,5 @@
 from langchain_core.documents import Document
+from pandas import Series
 
 def doc_ids(docs: list[Document]):
     return [doc.metadata["row_id"] for doc in docs]
