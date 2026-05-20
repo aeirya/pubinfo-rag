@@ -5,6 +5,7 @@ Rules:
 - If the answer is not in the documents, write: No relevant publication was found.
 - Do not guess.
 - Keep the answer brief.
+- No introduction, nothing, only the requested answer.
 
 Query:
 {query}
