@@ -5,7 +5,7 @@ import json
 DATA_DIR=Path('./data/publications')
 
 DEFAULT_COLUMNS = ['title', 'keywords', 'authors']
-ABSTRACTS_AND_KEYWORDS = ['title', 'keywords', 'abstracts']
+ABSTRACTS_AND_KEYWORDS = ['title', 'keywords', 'abstract']
 
 def list_names() -> list[str]:
     return sorted(p.stem for p in DATA_DIR.glob('*.csv'))
@@ -21,7 +21,7 @@ def load_jsonl(name: str):
 def load(name: str, columns=DEFAULT_COLUMNS, limit=None) -> pd.DataFrame:
     main = load_csv(name)
     more = load_jsonl(name)
-    df = main.merge(more, on="submission_id", how="left")
+    df = main.merge(more, on="submission_id", how="outer", suffixes=(None,'_copy'))
 
     if columns:
         df = df[columns]
@@ -29,3 +29,6 @@ def load(name: str, columns=DEFAULT_COLUMNS, limit=None) -> pd.DataFrame:
         df = df.head(limit)
         
     return df
+
+
+print(list(load('jimds', None)))
