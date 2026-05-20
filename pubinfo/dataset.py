@@ -1,6 +1,7 @@
 from pathlib import Path
 import pandas as pd
-import json
+from pubinfo import util
+
 
 DATA_DIR=Path('./data/publications')
 
@@ -14,11 +15,9 @@ def load_csv(name: str):
     return pd.read_csv(DATA_DIR / f'{name}.csv')
 
 def load_jsonl(name: str):
-    text = (DATA_DIR / f'{name}.jsonl').read_text()
-    jsons = [json.loads(line.strip()) for line in text.strip().splitlines()]
-    return pd.DataFrame(jsons)
+    return util.load_jsonl(DATA_DIR / f'{name}.jsonl')
 
-def load(name: str, columns=DEFAULT_COLUMNS, limit=None) -> pd.DataFrame:
+def load_db(name: str, columns=DEFAULT_COLUMNS, limit=None) -> pd.DataFrame:
     main = load_csv(name)
     more = load_jsonl(name)
     df = main.merge(more, on="submission_id", how="outer", suffixes=(None,'_copy'))
@@ -29,6 +28,3 @@ def load(name: str, columns=DEFAULT_COLUMNS, limit=None) -> pd.DataFrame:
         df = df.head(limit)
         
     return df
-
-
-print(list(load('jimds', None)))

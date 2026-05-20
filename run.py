@@ -1,9 +1,7 @@
 import argparse
-import pubinfo as pb
 from pubinfo import dataset, ollama, llm
-from pubinfo.retriever import hybrid_retriever, bm25_retriever, faiss_retriever
-from pubinfo.retriever import hybrid
-from pubinfo.template import prompt, qa
+from pubinfo.retrieval import build_bm25, build_dense, merge
+from pubinfo.template import context, prompt
 
 def parse_args():
     defaults = ollama.default_args()
@@ -14,14 +12,16 @@ def parse_args():
     parser.add_argument("--dataset", default="kmanpub", help="CSV name inside data/publications, without .csv")
     parser.add_argument("--columns", nargs="+", default=dataset.DEFAULT_COLUMNS)
     parser.add_argument("--limit", type=int, default=None)
-    parser.add_argument('--use_rag', action="store_true", default=True)
     parser.add_argument('--no_rag', action="store_true", default=False)
 
     # Only expose knobs we might actually touch.
+    # ollama
     parser.add_argument("--model", default=defaults["model"])
     parser.add_argument("--num-predict", type=int, default=defaults["num_predict"])
     parser.add_argument("--top-k", type=int, default=defaults["top_k"])
     parser.add_argument("--top-p", type=float, default=defaults["top_p"])
+    # rag
+    parser.add_argument("--rag_model", default="sentence-transformers/all-MiniLM-L6-v2")
     return parser.parse_args()
 
 def main():
@@ -29,18 +29,20 @@ def main():
 
     df = dataset.load(args.dataset, columns=args.columns, limit=args.limit)
     
-    if args.use_rag and not args.no_rag:
-        bm25 = bm25_retriever(df)
-        keyword_lookup = faiss_retriever(df, columns=['keywords'])
-        retriever = hybrid.fuse(bm25, keyword_lookup, k=5)
-
-        hit_ids = retriever(args.query)
+    if not args.no_rag:
+        bm25 = build_bm25(df, k=5, columns=['title', 'authors', 'abstract', 'keywords'])
+        keyword_lookup = build_dense(df, k=5, columns=['keywords'], model_name=args.rag_model)
+        retrieve = merge([bm25, keyword_lookup], rff_k=20 , top_k=5)
+        
+        hit_ids = retrieve(args.query)
         df = df.loc[hit_ids]
 
-    documents = qa.format(df)
+    documents = context.format(df)
     
     print("DOCUMENTS:")
     print(documents)
+    
+    quit(1)
 
     prompt_templ = prompt.load(args.template) if args.template else None
     model = ollama.on_server(**vars(args))
