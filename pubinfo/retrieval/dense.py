@@ -1,17 +1,8 @@
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
-from langchain_core.documents import Document
-from pandas import DataFrame, Series
-from .include import doc_ids, row_to_text
+from pandas import DataFrame
+from .include import doc_ids, make_documents 
 
-def make_documents(df: DataFrame, columns=None):
-    return [
-        Document(
-            page_content=row_to_text(row, columns=columns),
-            metadata={'row_id': idx}
-            ) 
-        for idx, row in df.iterrows()
-        ]
 
 def build(
         df: DataFrame, 

@@ -1,23 +1,10 @@
-from pandas import DataFrame
-import pandas as pd
 import re
+from pandas import DataFrame
 from langchain_community.retrievers import BM25Retriever
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from .include import doc_ids, row_to_text
+from .include import doc_ids, make_documents
 
-
-def make_documents(df: DataFrame, columns=None):
-    '''
-    Turn each dataframe row into a document
-    '''
-    return [
-        Document(
-            page_content=row_to_text(row, columns=columns), 
-            metadata={"row_id": row_id}
-            )
-        for row_id,row in df.iterrows()
-    ]
 
 def chunk_documents(documents: list[Document], chunk_size: int, chunk_overlap: int):
     splitter = RecursiveCharacterTextSplitter(
