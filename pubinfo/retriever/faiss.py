@@ -13,7 +13,7 @@ def make_documents(df: DataFrame, columns=None):
         for idx, row in df.iterrows()
         ]
 
-def retriever(
+def build(
         df: DataFrame, 
         k=4, 
         columns=None,

@@ -1,5 +1,7 @@
 from langchain_core.documents import Document
 from pandas import Series
+import pandas as pd
+
 
 def doc_ids(docs: list[Document]):
     return [doc.metadata["row_id"] for doc in docs]
@@ -11,7 +13,7 @@ def init(retriever, ds):
         return ds.loc[row_ids]
     return retrieve
 
-def row_to_text(row: Series, columns=None, include_column_names=False):
+def row_to_text(row: Series, columns=None, include_column_names=True):
     """
     Convert one dataframe row to searchable text.
     """

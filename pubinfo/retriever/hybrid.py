@@ -1,7 +1,7 @@
 from pubinfo.retriever import bm25_retriever, faiss_retriever
 
 
-def rrf_merge(rankings, k=10, rrf_k=60):
+def rrf_merge(rankings, rrf_k=60):
     """
     Reciprocal Rank Fusion
     It merges ranked lists without needing scores to be comparable
@@ -18,25 +18,24 @@ def rrf_merge(rankings, k=10, rrf_k=60):
     return [
         row_id
         for row_id, _ in sorted(scores.items(), key=lambda x: x[1], reverse=True)
-    ][:k]
+    ]
 
 
-def fuse(bm25, faiss, k):
+def fuse_retrievers(*retrievers, top_k=10, rrf_k=60):
     def retrieve(query):
-        bm25_ids = bm25(query)
-        faiss_ids = faiss(query)
-
-        return rrf_merge([bm25_ids, faiss_ids], k=k)
+        rankings = [retriever(query) for retriever in retrievers]
+        return rrf_merge(rankings, rrf_k=rrf_k)[:top_k]
     
     return retrieve
 
-def retriever(
+def build(
     df,
     k=5,
     bm25_k=20,
     faiss_k=20,
     bm25_cols = None,
-    faiss_cols = ['keywords']
+    faiss_cols = ['keywords'],
+    rff_k = 60,
 ):
 
     bm25 = bm25_retriever(
@@ -51,4 +50,4 @@ def retriever(
         columns=faiss_cols,
     )
 
-    return fuse
+    return fuse_retrievers([bm25, faiss], k, rff_k)

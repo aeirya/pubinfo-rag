@@ -35,7 +35,7 @@ def df_row_ids(docs: list[Document]):
     ids = doc_ids(docs)
     return list(dict.fromkeys(ids))
 
-def retriever(
+def build(
         df: DataFrame, 
         k=5, 
         columns=None,
