@@ -35,7 +35,7 @@ def build(
     faiss_k=20,
     bm25_cols = None,
     faiss_cols = ['keywords'],
-    rff_k = 60,
+    rrf_k = 60,
 ):
 
     bm25 = build_bm25(
@@ -50,4 +50,4 @@ def build(
         columns=faiss_cols,
     )
 
-    return merge([bm25, faiss], k, rff_k)
+    return merge(bm25, faiss, top_k=k, rrf_k=rrf_k)

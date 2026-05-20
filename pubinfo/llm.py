@@ -1,5 +1,6 @@
 from langchain_core.prompts import PromptTemplate
 import pubinfo as pb
+from pubinfo.util import format_question, formatted_print
 
 def predictor(chain):
     def predict(**kwargs):
@@ -7,6 +8,13 @@ def predictor(chain):
             'query': kwargs.pop('query'),
             'documents': kwargs.pop('documents'),
         }
+        
+        print("NEXT QUESTION")
+        print("PRINTING INPUT ARGS:")
+        print()
+        formatted_print(inputs)
+        print()
+        
         return chain.invoke(inputs).strip()
     return predict
 
@@ -19,6 +27,10 @@ def init(template=None, model=None):
 
     if template is None:
         template = pb.prompt.default()
+
+    print("template:")
+    print(template)
+    print()
 
     if model is None:
         model = pb.ollama.init_model()

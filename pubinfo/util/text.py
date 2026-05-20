@@ -27,9 +27,8 @@ def clean_authors(authors: str) -> list[str]:
     # to remove weird spaces
     author_list = [' '.join(a.split()) for a in author_list]
     
-    return [a.strip() for a in author_list]
+    return ', '.join([a.strip() for a in author_list])
 
 def get_authors(data: DataFrame, row: int) -> list[str]:
     authors = data["authors"][row]
-    return clean_authors(authors)
-
+    return clean_authors(authors).split(', ')

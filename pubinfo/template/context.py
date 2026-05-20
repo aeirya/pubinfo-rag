@@ -1,6 +1,7 @@
 from pandas import DataFrame
 
-def __record_to_text__(record: dict, i: int):
+
+def record_to_text_with_index(record: dict, i: int):
     rows = [
         f"{col}: {value}"
         for col, value in record.items()
@@ -13,15 +14,17 @@ def __record_to_text__(record: dict, i: int):
 def __to_text__(df: DataFrame):
     records = df.to_dict("records")
     documents = [
-        __record_to_text__(r,i) 
+        record_to_text_with_index(r,i) 
         for i,r in enumerate(records, start=1)
     ]
     return '\n\n'.join(documents)
 
 
-def format(df: DataFrame):
+def format(df: DataFrame, cols=None):
     '''
-    formats a DataFrame view as a question. e.g.:
-
+    enumerates dataframe rows
+    and stringifies them
     '''
+    if cols:
+        df = df[cols]
     return __to_text__(df)

@@ -20,10 +20,13 @@ def load_jsonl(name: str):
 
 def clean_data(df: pd.DataFrame):
     if 'abstract' in df:
-        df['abstract'] = df['abstract'].apply(text.clean_abstract).apply(lambda s: text.quote)
+        df['abstract'] = df['abstract'].apply(text.clean_abstract).apply(text.quote)
+    if 'authors' in df:
+        df['authors'] = df['authors'].apply(text.clean_authors)
+        
     return df
 
-def load_db(name: str, columns=None, limit=None) -> pd.DataFrame:
+def load_db(name: str, columns=MORE, limit=None) -> pd.DataFrame:
     main = load_csv(name)
     more = load_jsonl(name)
     

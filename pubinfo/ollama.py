@@ -1,5 +1,7 @@
 from langchain_ollama.llms import OllamaLLM
 
+OLLAMA_SERVER_BASE_URL = '127.0.0.1:23114'
+
 def default_args():
    # deterministic model
     return {
@@ -15,11 +17,15 @@ def default_args():
     
 def init_model(**kwargs):
     args = default_args()
+    
+    if kwargs.pop('server', False):
+        args['base_url'] = OLLAMA_SERVER_BASE_URL
+        
     args.update({k:v for k,v in kwargs.items() if k in args and v is not None})
     return OllamaLLM(**args)
 
 def on_server(
-    base_url="127.0.0.1:23114",
+    base_url=OLLAMA_SERVER_BASE_URL,
     **kwargs
 ):
     return init_model(base_url=base_url, **kwargs)

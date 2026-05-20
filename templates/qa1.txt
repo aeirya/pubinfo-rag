@@ -1,0 +1,7 @@
+Respond to the question with a single letter: A,B,C or D. Respond only with the letter. Only use the rows below to answer. Do not invent.
+
+Question:
+{query}
+
+Rows:
+{documents}

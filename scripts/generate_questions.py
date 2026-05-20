@@ -146,7 +146,7 @@ def main(args: Namespace):
 def parse_args():
     p = argparse.ArgumentParser(description="Generate QA Dataset")
     p.add_argument("--dataset", default="kmanpub", help="data/publications file, without .csv or .jsonl")
-    p.add_argument("--out", default='multiple_coice.csv', help="output path")
+    p.add_argument("--out", default='data/multiple_choice.csv', help="output path")
     return p.parse_args()
 
 if __name__ == '__main__':

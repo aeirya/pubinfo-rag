@@ -10,5 +10,5 @@ def build_retriever(
     return build_hybrid(
         df, 
         k=k, bm25_k=k, faiss_k=k, 
-        rff_k=3*k, 
+        rrf_k=3*k, 
         bm25_cols=bm_cols, faiss_cols=dense_cols)

@@ -29,7 +29,7 @@ def row_to_text(row: Series, columns=None, include_column_names=True):
     return "\n".join(
         f"{col}: {row[col]}"
         for col in columns
-        if pd.notna(row[col])
+        if col in row and pd.notna(row[col])
     )
     
 def make_documents(df: DataFrame, columns=None, row_fn=None):

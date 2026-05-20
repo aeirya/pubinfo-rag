@@ -1,4 +1,4 @@
-from rapidfuzz import fuzz
+# from rapidfuzz import fuzz
 
 def norm(x):
     return "" if x is None else " ".join(str(x).lower().strip().split())
