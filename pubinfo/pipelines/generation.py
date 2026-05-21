@@ -7,7 +7,7 @@ def predictor(chain, verbose=False):
     def predict(**kwargs):
         inputs = {
             'query': kwargs.pop('query'),
-            'documents': kwargs.pop('documents'),
+            'documents': kwargs.pop('documents', ''),
         }
         
         if verbose:
@@ -17,7 +17,13 @@ def predictor(chain, verbose=False):
             formatted_print(inputs)
             print()
         
-        return chain.invoke(inputs).strip()
+        out = chain.invoke(inputs).strip()
+        
+        if verbose:
+            print("OUTPUT:", out)
+        
+        return out
+        
     return predict
 
 def build_generator(template=None, model=None, verbose=False):

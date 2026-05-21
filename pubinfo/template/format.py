@@ -43,7 +43,7 @@ def rows_to_text(df: pd.DataFrame, cols=None):
 def rows_to_context(df: pd.DataFrame, ids: list[int], columns=None):
    return rows_to_text(df.loc[ids], cols=columns)
      
-def format_mcq(question: Question):
+def format_mcq(question: Question):    
     ''' multichoice questions '''
     prompt = {x: question[x] for x in 'ABCD'}
     choices = '\n'.join(f'{k}. {v}' for k,v in prompt.items())

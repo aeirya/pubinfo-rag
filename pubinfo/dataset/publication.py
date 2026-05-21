@@ -4,8 +4,8 @@ from .clean import clean_publication_data
 
 data_dir=Path('./data/publications')
 
-default_columns = ['title', 'keywords', 'abstract', 'authors', 'context_name']
-
+default_columns = ['title', 'keywords', 'abstract', 'authors', 'date_published', 'context_name']
+default_columns_no_abstract = list(set(default_columns) - set(['abstract']))
 
 def list_names() -> list[str]:
     return sorted(p.stem for p in data_dir.glob('*.csv'))

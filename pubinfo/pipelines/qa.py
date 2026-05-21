@@ -5,6 +5,7 @@ from pubinfo import template
 from pandas import DataFrame
 from pubinfo.typing import Model
 from pubinfo.models import ollama
+from pubinfo.dataset.publication import default_columns_no_abstract
 
 class RAGQA:
     def __init__(self, retriever: Retriever, generate: Model):
@@ -34,13 +35,16 @@ class QAConfig:
     model: str = 'gemma2:2b'
     backend: str = 'server'
     verbose: bool = False
+    column_list: list[str] = None
 
      
 def build_rag_qa(df: DataFrame, config: QAConfig):
     if config.columns == 'default':
-        config.columns = None
+        config.column_list = None
+    if config.columns == 'no_abstract':
+        config.column_list = default_columns_no_abstract
         
-    retriever = Retriever(df, config.k, config.columns)
+    retriever = Retriever(df, config.k, config.column_list)
     
     model = ollama.server(model=config.model) if config.backend == 'server' else ollama.local(model=config.model)
     generator = build_generator(

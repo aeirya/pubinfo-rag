@@ -20,6 +20,10 @@ def clean_authors(authors: str) -> list[str]:
     author_list = [' '.join(a.split()) for a in author_list]
     return ', '.join([a.strip() for a in author_list])
 
+def clean_date(date: str):
+    # todo: do tests on the effect of date format
+    return date
+
 def clean_publication_data(df: DataFrame):
     if 'abstract' in df:
         df['abstract'] = df['abstract'].apply(clean_abstract).apply(quote)

@@ -5,7 +5,7 @@
     {documents}
 
     Question:
-    {question}
+    {query}
 
     Output only one letter: A, B, C, or D.
     Exactly one character from this set: A B C D.

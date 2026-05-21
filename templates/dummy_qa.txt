@@ -1,0 +1,4 @@
+Respond to the question with a single letter: A,B,C or D. Respond only with the letter.
+
+Question:
+{query}
