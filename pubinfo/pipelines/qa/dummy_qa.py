@@ -9,6 +9,7 @@ def build_dummy_qa(df: DataFrame, prompt='dummy_qa', model='gemma2:2b', verbose=
         template=template.load(prompt),
         model=model,
         verbose=verbose,
+        backend=backend,
     )
     return lambda query: { 
         'answer': generator(query=query),

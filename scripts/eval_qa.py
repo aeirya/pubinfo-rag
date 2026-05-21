@@ -1,3 +1,13 @@
+import os
+
+os.environ["TQDM_DISABLE"] = "1"
+os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
+
+from transformers.utils import logging as hf_logging
+hf_logging.disable_progress_bar()
+hf_logging.set_verbosity_error()
+
+
 import argparse
 
 import pandas as pd
@@ -69,30 +79,39 @@ def model_args_list():
             'num_predict': 5,
             'reasoning': False,
         },
-        {
-            'model': 'gemma2:2b',
-            "num_ctx": 4096,
-            'num_predict': 128,
-            'reasoning': False,
-        },
-        {
-            'model': 'qwen2.5:7b',
-            "num_ctx": 4096,
-            'num_predict': 256,
-            'reasoning': False
-        },
-        {
-            'model': "qwen3:8b",
-            'num_ctx': 2048,
-            'reasoning': True,
-            'num_predict': 256,
-        }
+        # {
+        #     'model': 'gemma2:2b',
+        #     "num_ctx": 4096,
+        #     'num_predict': 128,
+        #     'reasoning': False,
+        # },
+        # {
+        #     'model': 'qwen2.5:7b',
+        #     "num_ctx": 4096,
+        #     'num_predict': 256,
+        #     'reasoning': False
+        # },
+        # {
+        #     'model': "qwen3:8b",
+        #     'num_ctx': 2048*2,
+        #     'reasoning': True,
+        #     'num_predict': 256,
+        # }
     ]
+
+
+def limit_options():
+    pass
 
 def abstract_exp_configs(
     prompts = ['qa1', 'qa2'],
-    columns = ['default', 'no_abstract'],
-    ks = [4, 10],
+    columns = [
+        'default', 
+        # 'no_abstract'
+        ],
+    ks = [4,
+        #   10
+          ],
     models = model_args_list()
 ):
     for model_args, prompt, cols, k in product(models, prompts, columns, ks):
@@ -110,14 +129,15 @@ def reorder_columns(report: pd.DataFrame):
 def abstract_experiment():
     tests = load_data('./data/questions/abstract_questions.csv')
     db = load_db('kmanpub')
-
+    # configs = abstract_exp_configs(models=[model_args_list()[-1]])
+    configs = abstract_exp_configs()
     results = [
         run_abstract_test(db, tests, config)
-        for config in abstract_exp_configs()
+        for config in configs
     ]
 
     report = pd.DataFrame(results)
-    report.to_csv("qa_abstracts_report_full.csv", index=False)
+    report.to_csv("qa_abstracts_report_full_postproc", index=False)
     return report
     
     

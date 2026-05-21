@@ -13,7 +13,7 @@ class SearchResult:
 
 
 class Retriever:
-    def __init__(self, df: pd.DataFrame, k: int = 4, columns: Iterable[str] | None = None):
+    def __init__(self, df: pd.DataFrame, k: int = 4, columns: list|str = None):
         self.df = df
         self.k = k
         self.columns = columns
