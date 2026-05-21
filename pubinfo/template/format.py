@@ -22,7 +22,7 @@ def add_index(index: int, text: str):
     
 def rows_to_text(df: pd.DataFrame, cols=None):
     if cols is None:
-        cols = df.index
+        cols = list(df)
     
     records = df.to_dict("records")
     documents = [
@@ -31,14 +31,14 @@ def rows_to_text(df: pd.DataFrame, cols=None):
     ]
     return '\n\n'.join(documents)
 
-def format(o: object):
-    if isinstance(o, pd.DataFrame):
-        return rows_to_text(o)
-    if isinstance(o, pd.Series):
-        return row_to_text(o)
-    if isinstance(o, dict):
-        return record_to_text(o)
-    return repr(o)
+# def format(o: object):
+#     if isinstance(o, pd.DataFrame):
+#         return rows_to_text(o)
+#     if isinstance(o, pd.Series):
+#         return row_to_text(o)
+#     if isinstance(o, dict):
+#         return record_to_text(o)
+#     return repr(o)
 
 def rows_to_context(df: pd.DataFrame, ids: list[int], columns=None):
    return rows_to_text(df.loc[ids], cols=columns)

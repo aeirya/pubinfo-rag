@@ -15,6 +15,7 @@ def evaluate_qa(
     model: QAModel,
     validate = exact_answer_match,
     verbose = False,
+    score_fn = 'count',
 ):
     outputs = []
 
@@ -34,8 +35,15 @@ def evaluate_qa(
             "is_correct": is_correct,
         })
 
-    return accuracy(outputs), outputs
+    return calc_score(outputs, score_fn), outputs
 
+
+def calc_score(outputs: list[dict], method='count'):
+    if method == 'count':
+        return sum(out['is_correct'] for out in outputs)
+    if method == 'acc':
+        return accuracy(outputs)
+    return None
 
 def accuracy(outputs: list[dict]) -> float:
     return sum(out["is_correct"] for out in outputs) / len(outputs) if outputs else 0.0

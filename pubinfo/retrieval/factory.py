@@ -1,13 +1,13 @@
 from pubinfo.retrieval import build_hybrid
 from pandas import DataFrame
-from pubinfo.dataset.publication import Columns
+from pubinfo.dataset.publication import default_columns
 
 def build_retriever(
     df: DataFrame, 
     k = 10,
     columns = None,
-    bm_cols = Columns.DEFAULT,
-    dense_cols = Columns.DEFAULT,
+    bm_cols = default_columns,
+    dense_cols = default_columns,
     ):
     if columns:
         bm_cols = dense_cols = columns

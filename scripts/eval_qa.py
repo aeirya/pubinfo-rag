@@ -19,15 +19,16 @@ def main():
             model="gemma2:2b",
             prompt="qa1",
             backend="server",
+            verbose=True
         ),
     )
-    score, outs = evaluate_qa(tests, qa)
+    score, outs = evaluate_qa(tests, qa, verbose=True)
     report = pd.DataFrame(outs)
     
     # if 'RelevantIds' in tests:
     #     report['gold_relavant_ids'] = tests['RelevantIds'].to_numpy()
    
-    # report = report[['answer', 'gold', 'retrieved_ids', 'question']]
+    report = report[['answer', 'gold', 'retrieved_ids', 'question']]
     
     report.to_csv('report.csv')
     

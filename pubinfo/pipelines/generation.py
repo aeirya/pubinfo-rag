@@ -2,16 +2,15 @@ from langchain_core.prompts import PromptTemplate
 import pubinfo as pb
 from pubinfo.util import format_question, formatted_print
 
-LOG = False
 
-def predictor(chain):
+def predictor(chain, verbose=False):
     def predict(**kwargs):
         inputs = {
             'query': kwargs.pop('query'),
             'documents': kwargs.pop('documents'),
         }
         
-        if LOG:
+        if verbose:
             print("NEXT QUESTION")
             print("PRINTING INPUT ARGS:")
             print()
@@ -21,7 +20,7 @@ def predictor(chain):
         return chain.invoke(inputs).strip()
     return predict
 
-def build_generator(template=None, model=None):
+def build_generator(template=None, model=None, verbose=False):
     ''' 
         Example:
         generate = build_generator(template='rerank', model="gemma2:2b", top_k=20, top_p=0.8)
@@ -31,7 +30,7 @@ def build_generator(template=None, model=None):
     if template is None:
         template = pb.prompt.default()
 
-    if LOG:
+    if verbose:
         print("template:")
         print(template)
         print()
@@ -41,4 +40,4 @@ def build_generator(template=None, model=None):
 
     prompt = PromptTemplate.from_template(template)
     chain = prompt | model
-    return predictor(chain)
+    return predictor(chain, verbose=verbose)

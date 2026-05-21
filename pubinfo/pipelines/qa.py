@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from pubinfo import template
 from pandas import DataFrame
 from pubinfo.typing import Model
+from pubinfo.models import ollama
 
 class RAGQA:
     def __init__(self, retriever: Retriever, generate: Model):
@@ -26,12 +27,13 @@ class RAGQA:
  
 @dataclass
 class QAConfig:
-    k = 5
-    prompt = 'qa1'
+    k: int = 5
+    prompt: str = 'qa1'
     
-    columns = 'default'
-    model = 'gemma2:2b'
-    backend = 'server'
+    columns: str = 'default'
+    model: str = 'gemma2:2b'
+    backend: str = 'server'
+    verbose: bool = False
 
      
 def build_rag_qa(df: DataFrame, config: QAConfig):
@@ -39,8 +41,11 @@ def build_rag_qa(df: DataFrame, config: QAConfig):
         config.columns = None
         
     retriever = Retriever(df, config.k, config.columns)
+    
+    model = ollama.server(model=config.model) if config.backend == 'server' else ollama.local(model=config.model)
     generator = build_generator(
         template=template.load(config.prompt),
-        model=config.model
+        model=model,
+        verbose=config.verbose,
     )
     return RAGQA(retriever, generator)

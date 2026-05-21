@@ -3,7 +3,7 @@ from pathlib import Path
 import json
 
 def read_csv(path: Path):
-    return pd.read_csv(path.with_suffix('.csv'))
+    return pd.read_csv(Path(path).with_suffix('.csv'))
 
 def read_jsonl(path: Path|str, to_df=True):
     text = Path(path).with_suffix('.jsonl').read_text().strip()
@@ -15,7 +15,7 @@ def read_jsonl(path: Path|str, to_df=True):
 def load_data(name: str) -> pd.DataFrame:
     path = Path(name)
     if not path.exists():
-        path = next(iter(path.glob(f'./data/*{name}.*')))
+        path = Path(next(iter(path.glob(f'./data/*{name}.*'))))
     
     if path.suffix == '.csv':
         return read_csv(path)
