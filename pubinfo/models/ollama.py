@@ -13,7 +13,7 @@ def default_args():
         "base_url": local_url,
         
         "num_predict": 30,
-        "num_ctx": 4096,
+        # "num_ctx": 4096,
         
         "temperature": 0,
         "seed": 42,

@@ -50,23 +50,57 @@ def run_abstract_test(
     score, outputs = evaluate_qa(tests, qa, verbose=False)    
     # print("abstract score", score)
     # save_report(outs, 'report_abstracts.csv')
-    return {
+    
+    result = {
             "prompt": config.prompt,
             "columns": config.columns,
             "k": config.k,
-            'score': score
+            'score': score,
+            **config.model_args,
         }
+    print(repr(result))
+    return result
+
+def model_args_list():
+    return [
+        {
+            'model': 'gemma2:2b',
+            'num_ctx': 2048,
+            'num_predict': 5,
+            'reasoning': False,
+        },
+        {
+            'model': 'gemma2:2b',
+            "num_ctx": 4096,
+            'num_predict': 128,
+            'reasoning': False,
+        },
+        {
+            'model': 'qwen2.5:7b',
+            "num_ctx": 4096,
+            'num_predict': 256,
+            'reasoning': False
+        },
+        {
+            'model': "qwen3:8b",
+            'num_ctx': 2048,
+            'reasoning': True,
+            'num_predict': 256,
+        }
+    ]
 
 def abstract_exp_configs(
     prompts = ['qa1', 'qa2'],
     columns = ['default', 'no_abstract'],
     ks = [4, 10],
+    models = model_args_list()
 ):
-    for prompt, cols, k in product(prompts, columns, ks):
+    for model_args, prompt, cols, k in product(models, prompts, columns, ks):
         config = QAConfig(
             prompt=prompt,
             columns=cols,
             k=k,
+            model_args=model_args,
         )
         yield config
 
@@ -83,7 +117,7 @@ def abstract_experiment():
     ]
 
     report = pd.DataFrame(results)
-    report.to_csv("qa_abstracts_report.csv", index=False)
+    report.to_csv("qa_abstracts_report_full.csv", index=False)
     return report
     
     
@@ -117,7 +151,7 @@ def full_rag(db):
         db,
         QAConfig(
             k=4,
-            model="gemma2:2b",
+            model_args={"model": "gemma2:2b"},
             prompt="qa1",
             backend="server",
             verbose=False
