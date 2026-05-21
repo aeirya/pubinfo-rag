@@ -2,6 +2,8 @@ from langchain_core.prompts import PromptTemplate
 import pubinfo as pb
 from pubinfo.util import format_question, formatted_print
 
+LOG = False
+
 def predictor(chain):
     def predict(**kwargs):
         inputs = {
@@ -9,28 +11,30 @@ def predictor(chain):
             'documents': kwargs.pop('documents'),
         }
         
-        print("NEXT QUESTION")
-        print("PRINTING INPUT ARGS:")
-        print()
-        formatted_print(inputs)
-        print()
+        if LOG:
+            print("NEXT QUESTION")
+            print("PRINTING INPUT ARGS:")
+            print()
+            formatted_print(inputs)
+            print()
         
         return chain.invoke(inputs).strip()
     return predict
 
-def init(template=None, model=None):
+def build_generator(template=None, model=None):
     ''' 
         Example:
-        predict = init_llm(template='rerank', model="gemma2:2b", top_k=20, top_p=0.8)
-        answer = predict(query="...", documents="...")
+        generate = build_generator(template='rerank', model="gemma2:2b", top_k=20, top_p=0.8)
+        answer = generate(query="...", documents="...")
     '''
 
     if template is None:
         template = pb.prompt.default()
 
-    print("template:")
-    print(template)
-    print()
+    if LOG:
+        print("template:")
+        print(template)
+        print()
 
     if model is None:
         model = pb.ollama.init_model()

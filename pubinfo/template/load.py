@@ -1,7 +1,7 @@
 from pathlib import Path
 
 '''
-module for prompt templates
+module for loading prompt templates
 '''
 
 def load(templ_name, templ_dir='./templates'):

@@ -1,5 +1,6 @@
 from langchain_core.documents import Document
 from pandas import DataFrame
+from pubinfo.template.format import record_to_text
 
 def format_results(retrieved_docs: list[Document], data: DataFrame):
     context = "<Articles found by the search engine>\n"
@@ -17,3 +18,8 @@ def format_results(retrieved_docs: list[Document], data: DataFrame):
     context += "</Articles found by the search engine>"
 
     return context
+
+def formatted_print(d: dict):
+    text = record_to_text(d)
+    for line in text.split('\n'):
+        print(line)

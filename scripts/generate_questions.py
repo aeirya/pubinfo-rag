@@ -3,7 +3,7 @@ from pandas import DataFrame
 import random
 import argparse
 from argparse import Namespace
-from pubinfo.dataset import load_db
+from pubinfo.dataset.publication import load_db
 from pubinfo.util.text import get_authors
 
 

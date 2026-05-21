@@ -1,7 +1,7 @@
 import argparse
 
 from pubinfo.util import load_jsonl
-from pubinfo.dataset import load_db
+from pubinfo.dataset.publication import load_db
 from pubinfo.evaluate import evaluate_examples
 from pubinfo.evaluate.report import summarize, summarize_by_column
 from pubinfo.retrieval import build_retriever

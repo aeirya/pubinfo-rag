@@ -1,37 +1,45 @@
 from pandas import DataFrame
-from typing import Callable
-from pubinfo.template import context
-from pubinfo.util import stringify
 from pubinfo.util import format_question
+from pubinfo.typing import QAModel
+from pubinfo.evaluate import metrics
 
-LOG_PROMPT = False
 
-Validator = Callable[[str|dict, dict], bool]
-Model = Callable[[dict], str|dict]
+def exact_answer_match(output: dict, test: dict):
+    gold = test.get('Correct')
+    pred = output.get('answer')
+    return gold, metrics.exact(pred, gold)
 
-def get_records(tests: DataFrame):
-    return tests.to_dict(orient='records')
 
-def evaluate_qa(db: DataFrame, tests: DataFrame, model: Model, validate: Validator):
-    right_ids = []
-    wrong_ids = []
-    outs = []
-    
-    for i, test in enumerate(get_records(tests)):
-        prompt = format_question(test)
-        
-        if LOG_PROMPT:
-            print('prompt:')
-            print(prompt)
-        
-        out = model(prompt)
-        if validate(out, test):
-            right_ids += [i]
-        else:
-            wrong_ids += [i]
+def evaluate_qa(
+    tests: DataFrame,
+    model: QAModel,
+    validate = exact_answer_match,
+    verbose = False,
+):
+    outputs = []
+
+    for i, test in enumerate(tests.to_dict(orient="records")):
+        question = format_question(test)
+
+        if verbose:
+            log(question, i)
             
-        outs.append(out)
+        output = model(question)
+        gold, is_correct = validate(output, test)
+        
+        outputs.append({
+            **output,
+            "question": question,
+            "gold": gold,
+            "is_correct": is_correct,
+        })
 
-    R = len(right_ids)
-    W = len(wrong_ids)
-    return R / (R+W), outs
+    return accuracy(outputs), outputs
+
+
+def accuracy(outputs: list[dict]) -> float:
+    return sum(out["is_correct"] for out in outputs) / len(outputs) if outputs else 0.0
+
+def log(question, i):
+    print(f"\nQUESTION {i}")
+    print(question)

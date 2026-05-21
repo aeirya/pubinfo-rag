@@ -1,0 +1,28 @@
+from dataclasses import dataclass
+from collections.abc import Iterable
+import pandas as pd
+
+from pubinfo.template.format import rows_to_context
+from pubinfo.retrieval import build_retriever
+
+
+@dataclass
+class SearchResult:
+    ids: list
+    context: str
+
+
+class Retriever:
+    def __init__(self, df: pd.DataFrame, k: int = 4, columns: Iterable[str] | None = None):
+        self.df = df
+        self.k = k
+        self.columns = columns
+        self._retrieve_ids = build_retriever(df, k=k, columns=columns)
+
+    def ids(self, query: str) -> list:
+        return self._retrieve_ids(query)
+
+    def search(self, query: str) -> SearchResult:
+        ids = self.ids(query)
+        context = rows_to_context(self.df, ids, columns=self.columns)
+        return SearchResult(ids=ids, context=context)
