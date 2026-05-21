@@ -20,10 +20,19 @@ class RAGQA:
             query=question,
             documents=result.context,
         )
-
-        # todo: add post processing step to raw if needed
+        
+        raw = raw.strip()
+        answer = ''
+        for x in 'ABCD':
+            if x in raw:
+                answer = x
+                break
+        if answer == '':
+            print(f"raw text |{raw}| had no answer")
+        
+        # todo: add better post processing step to raw if needed
         return {
-            "answer": raw.strip(),
+            "answer": answer,
             "retrieved_ids": result.ids,
         }
  
@@ -33,13 +42,23 @@ class QAConfig:
     prompt: str = 'qa1'
     
     columns: str = 'default'
-    model_args: dict[str, Any] = field(default_factory=dict)
-    backend: str = 'server'
     verbose: bool = False
     
     column_list: list[str] = field(default_factory=list)
+    prediction: str = "choice"
+    
+    model: str = None
+    model_args: dict[str, Any] = field(default_factory=dict)
+    backend: str = 'server'
+    
+    def get_model_args(self):
+        return {
+            'template': template.load(self.prompt),
+            'model': self.model,
+            'backend': self.backend,
+            **self.model_args
+        }
 
-     
 def build_rag_qa(df: DataFrame, config: QAConfig):
     if config.columns == 'default':
         config.column_list = None
@@ -47,11 +66,9 @@ def build_rag_qa(df: DataFrame, config: QAConfig):
         config.column_list = default_columns_no_abstract
         
     retriever = Retriever(df, config.k, config.column_list)
-    
-    model = ollama.init(**config.model_args)
     generator = build_generator(
-        template=template.load(config.prompt),
-        model=model,
         verbose=config.verbose,
+        prediction_mode=config.prediction,
+        **config.get_model_args()
     )
     return RAGQA(retriever, generator)

@@ -20,10 +20,14 @@ def default_args():
         # "top_k": 10,
         # "top_p": 0.5,
     }
+  
+def fill_args(**kwargs):
+    config = default_args()
+    config.update({k: v for k, v in kwargs.items() if k in config and v is not None})
+    return config 
     
 def __init_model__(**kwargs):
-    args = default_args()
-    args.update({k:v for k,v in kwargs.items() if k in args and v is not None})
+    args = fill_args(**kwargs)
     return OllamaLLM(**args)
 
 def server(
@@ -43,3 +47,5 @@ def init(backend='server', **kwargs):
         return server(**kwargs)
     if backend == 'local':
         return local(**kwargs)
+    
+    raise ValueError(f"Unknown Ollama backend: {backend}")

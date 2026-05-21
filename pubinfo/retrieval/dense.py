@@ -12,7 +12,7 @@ def build(
         ):
     
     docs = make_documents(df, columns)
-    emb = HuggingFaceEmbeddings(model_name=model_name)
+    emb = HuggingFaceEmbeddings(model_name=model_name, model_kwargs={"device": "cpu"})
     db = FAISS.from_documents(docs, emb)
 
     retriever = db.as_retriever(

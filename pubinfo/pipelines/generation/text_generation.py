@@ -19,14 +19,14 @@ def predictor(chain, verbose=False):
         
         out = chain.invoke(inputs).strip()
         
-        if verbose:
+        if verbose or True:
             print("OUTPUT:", out)
         
         return out
         
     return predict
 
-def build_generator(template=None, model=None, verbose=False):
+def build_text_generator(template=None, model=None, verbose=False, model_args={}):
     ''' 
         Example:
         generate = build_generator(template='rerank', model="gemma2:2b", top_k=20, top_p=0.8)
@@ -41,9 +41,12 @@ def build_generator(template=None, model=None, verbose=False):
         print(template)
         print()
 
+    if isinstance(model, str):
+        model = ollama.init(model=model, **model_args) 
+        
     if model is None:
         model = pb.ollama.init_model()
-
+        
     prompt = PromptTemplate.from_template(template)
     chain = prompt | model
     return predictor(chain, verbose=verbose)
