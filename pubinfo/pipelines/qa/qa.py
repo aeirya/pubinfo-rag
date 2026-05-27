@@ -2,7 +2,7 @@ from pubinfo.retrieval import Retriever
 from pubinfo.pipelines.generation import build_generator
 from pandas import DataFrame
 from pubinfo.typing import Model
-from pubinfo.pipelines.qa import config
+from pubinfo.pipelines.qa import QAConfig
 
 
 class RAGQA:
@@ -32,7 +32,7 @@ def build_qa_generator(config: QAConfig):
     gen = build_generator(
         verbose=config.verbose,
         prediction_mode=config.prediction_mode,
-        **config.get_model_args()
+        **config.model_args
     )
     if config.prediction_mode == 'text':
         return lambda x: postprocess_text(gen(x))

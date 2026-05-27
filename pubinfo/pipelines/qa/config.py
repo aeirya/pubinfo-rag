@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from pubinfo import template
-
+from typing import Any
 
 @dataclass
 class QAConfig:
@@ -17,7 +17,8 @@ class QAConfig:
     model_args: dict[str, Any] = field(default_factory=dict)
     backend: str = 'server'
     
-    def gen_kwargs(self):
+    @property
+    def model_args(self):
         return {
             'template': template.load(self.prompt),
             'model': self.model,

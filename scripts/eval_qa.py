@@ -14,7 +14,7 @@ import pandas as pd
 from pubinfo.evaluate.qa import evaluate_qa
 from pubinfo.dataset import load_db, load_data
 from pubinfo.pipelines.qa import build_rag_qa, QAConfig, RAGQA
-from pubinfo.pipelines.dummy_qa import build_dummy_qa
+from pubinfo.pipelines.qa import build_dummy_qa
 from itertools import product
 
 def save_report(outs: list[dict], path: str):
