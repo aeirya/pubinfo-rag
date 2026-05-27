@@ -1,5 +1,6 @@
-from pubinfo.retrieval import Retriever, SearchResult
 import random
+
+from pubinfo.retrieval import Retriever, SearchResult
 from pubinfo.typing import Model
 
 

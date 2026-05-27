@@ -1,21 +1,23 @@
 import os
+from itertools import product
+
+import pandas as pd
+
+from pubinfo.dataset import load_data, load_db
+from pubinfo.evaluate.qa import evaluate_qa
+from pubinfo.pipelines.qarag import RAG, QAConfig, build_dummy_qa, build_rag_qa
 
 os.environ["TQDM_DISABLE"] = "1"
 os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
 
 from transformers.utils import logging as hf_logging
+
 hf_logging.disable_progress_bar()
 hf_logging.set_verbosity_error()
 
 
-import argparse
 
-import pandas as pd
-from pubinfo.evaluate.qa import evaluate_qa
-from pubinfo.dataset import load_db, load_data
-from pubinfo.pipelines.qa import build_rag_qa, QAConfig, RagQA
-from pubinfo.pipelines.qa import build_dummy_qa
-from itertools import product
+
 
 def save_report(outs: list[dict], path: str):
     # print("PRINTING OUTPUTS OF THE EVALUATE FUNCTION")
@@ -27,7 +29,7 @@ def save_report(outs: list[dict], path: str):
     report = reorder_columns(report)
     report.to_csv(path)
 
-def eval_first_authors(qa: RagQA, multiple_choice: pd.DataFrame, output_path='report_authors.csv'):
+def eval_first_authors(qa: RAG, multiple_choice: pd.DataFrame, output_path='report_authors.csv'):
     tests = multiple_choice.loc[:20]
     score, outs = evaluate_qa(tests, qa, verbose=False)
     save_report(outs, output_path)
@@ -35,7 +37,7 @@ def eval_first_authors(qa: RagQA, multiple_choice: pd.DataFrame, output_path='re
     print('report stored in', output_path)
 
 
-def eval_recent_articles(qa: RagQA, multiple_choice: pd.DataFrame, output_path='report_recents.csv'):
+def eval_recent_articles(qa: RAG, multiple_choice: pd.DataFrame, output_path='report_recents.csv'):
     tests = multiple_choice.loc[20:]
     score, outs = evaluate_qa(tests, qa)
     save_report(outs, output_path)

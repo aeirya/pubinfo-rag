@@ -3,8 +3,6 @@
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from pubinfo import template as templates
-
 CHOICES = list("ABCD")
 
 def softmax(scores):
@@ -52,7 +50,6 @@ def build_choice_scorer(
     model="google/gemma-2-2b-it",
     return_scores=False,
     device="auto",
-    dtype="auto",
 ):
     model = get_model_name(model)
     tokenizer = AutoTokenizer.from_pretrained(model)
