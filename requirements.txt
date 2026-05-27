@@ -9,5 +9,5 @@ ipykernel
 sentence-transformers
 langchain_huggingface
 faiss-cpu
-rapidfuzz
-# requests
+requests
+# rapidfuzz
