@@ -1,13 +1,24 @@
 library(ggplot2)
-# sample(c(0,1), 1000, replace = T, prob = c(0.2, 0.8))
 
+# Put the real data in:
+#data = read.csv("path/to/data")
+
+# This is just a manually defined placeholder
 data = data.frame(IR = c("Semantic", "Semantic", "Semantic"),
            Scenario = c("No Rag", "Rag", "g-Rag"),
            author_qa = c(0.25, 0.6, 0.8),
            chronology_qa = c(0.25, 0.6, 0.8)
            )
 
+# Make sure this is correct
 number_of_questions = 1000
+
+# Set up the name path for the output
+output = "/home/gabriel/Documents/RAG/example.png"
+
+####################################
+# Leave as is from now on
+
 author_lower_intervals = vector()
 author_upper_intervals = vector()
 chronology_lower_intervals = vector()
@@ -43,6 +54,8 @@ data = cbind(data,
 
 
 
+png(filename = output)
+
 ggplot(data, aes(y = situations, x = author_qa)) +
   geom_point(size = 3) +
   geom_errorbarh(
@@ -55,4 +68,6 @@ ggplot(data, aes(y = situations, x = author_qa)) +
     title = "Estimated values for p with 99% confidence intervals"
   ) +
   theme_minimal()
+
+dev.off()
 
