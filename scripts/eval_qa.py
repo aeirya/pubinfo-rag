@@ -13,7 +13,7 @@ import argparse
 import pandas as pd
 from pubinfo.evaluate.qa import evaluate_qa
 from pubinfo.dataset import load_db, load_data
-from pubinfo.pipelines.qa import build_rag_qa, QAConfig, RAGQA
+from pubinfo.pipelines.qa import build_rag_qa, QAConfig, RagQA
 from pubinfo.pipelines.qa import build_dummy_qa
 from itertools import product
 
@@ -27,7 +27,7 @@ def save_report(outs: list[dict], path: str):
     report = reorder_columns(report)
     report.to_csv(path)
 
-def eval_first_authors(qa: RAGQA, multiple_choice: pd.DataFrame, output_path='report_authors.csv'):
+def eval_first_authors(qa: RagQA, multiple_choice: pd.DataFrame, output_path='report_authors.csv'):
     tests = multiple_choice.loc[:20]
     score, outs = evaluate_qa(tests, qa, verbose=False)
     save_report(outs, output_path)
@@ -35,7 +35,7 @@ def eval_first_authors(qa: RAGQA, multiple_choice: pd.DataFrame, output_path='re
     print('report stored in', output_path)
 
 
-def eval_recent_articles(qa: RAGQA, multiple_choice: pd.DataFrame, output_path='report_recents.csv'):
+def eval_recent_articles(qa: RagQA, multiple_choice: pd.DataFrame, output_path='report_recents.csv'):
     tests = multiple_choice.loc[20:]
     score, outs = evaluate_qa(tests, qa)
     save_report(outs, output_path)
@@ -104,7 +104,9 @@ def limit_options():
     pass
 
 def abstract_exp_configs(
-    prompts = ['qa1', 'qa2'],
+    prompts = [
+        'qa1', 'qa2'
+        ],
     columns = [
         'default', 
         # 'no_abstract'
