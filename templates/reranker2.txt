@@ -1,0 +1,10 @@
+Query:
+{query}
+
+Rows:
+{documents}
+
+Return only the row numbers that are relevant to the query.
+If none are relevant, return NONE.
+
+Relevant rows:
