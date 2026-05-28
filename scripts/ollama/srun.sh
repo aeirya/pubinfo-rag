@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ollama_gpu() {
-    local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+ollama_gpu() {
     srun -p GPU-ilara \
         --time=02:00:00 \
         --cpus-per-task=4 \
