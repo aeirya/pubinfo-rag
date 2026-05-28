@@ -7,6 +7,7 @@ import pandas as pd
 from pubinfo.evaluate.qa import evaluate_qa
 from pubinfo.evaluate.retrieval import evaluate_retrieval
 from pubinfo.pipelines.qarag.config import QAConfig
+from pubinfo.util import format_question
 
 
 @dataclass
@@ -24,6 +25,7 @@ def config_metadata(config: QAConfig) -> dict:
         "prediction_mode": config.prediction_mode,
         "backend": config.backend,
         "model": config.model or config.model_args.get("model"),
+        "retrieval_mode": config.retrieval_mode,
         "retriever": retrieval.kind,
         "retrieval_columns": retrieval.columns,
     }
@@ -69,9 +71,7 @@ def evaluate_qa_config(
     *,
     verbose: bool = False,
 ) -> QAExperimentResult:
-    from pubinfo.pipelines.qarag.factory import build_qa_rag
-
-    qa = build_qa_rag(db, config)
+    qa = build_qa_model(db, tests, config)
     score, outputs = evaluate_qa(tests, qa, verbose=verbose)
     outputs = add_retrieval_scores(outputs, tests)
 
@@ -80,6 +80,41 @@ def evaluate_qa_config(
         rows[key] = value
 
     return QAExperimentResult(score=score, outputs=rows)
+
+
+def build_qa_model(db: pd.DataFrame, tests: pd.DataFrame, config: QAConfig):
+    from pubinfo.pipelines.grag.grag import GRag
+    from pubinfo.pipelines.qarag.factory import build_qa_generator, build_qa_rag
+    from pubinfo.retrieval import Retriever
+    from pubinfo.retrieval.factory import build_retriever_from_config
+
+    if config.retrieval_mode == "normal":
+        return build_qa_rag(db, config)
+
+    generator = build_qa_generator(config)
+
+    if config.retrieval_mode == "dummy":
+        return lambda query: {
+            "answer": generator(query=query, documents=""),
+            "retrieved_ids": [],
+        }
+
+    if config.retrieval_mode == "guided":
+        retrieval = config.retrieval_config()
+        retriever = Retriever(
+            db,
+            config.k,
+            config.columns,
+            retrieve_ids=build_retriever_from_config(db, retrieval),
+        )
+        qa = GRag(retriever, generator)
+        gold_by_question = {
+            format_question(test): gold_ids_from_test(test)
+            for test in tests.to_dict(orient="records")
+        }
+        return lambda query: qa(query, gold_by_question.get(query, []))
+
+    raise ValueError(f"Unknown retrieval mode: {config.retrieval_mode!r}")
 
 
 def run_qa_grid(

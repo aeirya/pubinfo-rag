@@ -6,6 +6,7 @@ from pubinfo.retrieval.config import RetrievalConfig
 
 
 GenerationMode = Literal["constrained", "text", "choice"]
+RetrievalMode = Literal["dummy", "normal", "guided"]
 
 
 @dataclass
@@ -19,6 +20,7 @@ class QAConfig:
     model_args: dict[str, Any] = field(default_factory=dict)
     backend: str = "server"
     verbose: bool = False
+    retrieval_mode: RetrievalMode = "normal"
 
     def generation_args(self) -> dict[str, Any]:
         args = {

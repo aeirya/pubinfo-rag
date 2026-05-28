@@ -16,6 +16,12 @@ def parse_args():
     parser.add_argument("--prompt", action="append")
     parser.add_argument("--columns", action="append")
     parser.add_argument("--retriever", action="append")
+    parser.add_argument(
+        "--retrieval-mode",
+        action="append",
+        choices=["dummy", "normal", "guided"],
+        help="Retrieval mode: no context, ordinary retrieval, or gold-guided retrieval.",
+    )
     parser.add_argument("--k", action="append", type=int)
     parser.add_argument("--prediction-mode", default="choice")
     parser.add_argument("--model", default="gemma2:2b")
@@ -25,10 +31,11 @@ def parse_args():
 
 
 def build_configs(args):
-    for prompt, columns, retriever, k in product(
+    for prompt, columns, retriever, retrieval_mode, k in product(
         args.prompt or ["qa1"],
         args.columns or ["default"],
         args.retriever or ["hybrid"],
+        args.retrieval_mode or ["normal"],
         args.k or [4],
     ):
         yield QAConfig(
@@ -38,6 +45,7 @@ def build_configs(args):
             prediction_mode=args.prediction_mode,
             model=args.model,
             backend=args.backend,
+            retrieval_mode=retrieval_mode,
             retrieval=RetrievalConfig(kind=retriever, k=k, columns=columns),
         )
 
