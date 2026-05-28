@@ -1,6 +1,6 @@
 from langchain_core.documents import Document
 from pandas import DataFrame
-from pubinfo.template.format import record_to_text
+from pubinfo.prompts.format import record_to_text
 
 def format_results(retrieved_docs: list[Document], data: DataFrame):
     context = "<Articles found by the search engine>\n"

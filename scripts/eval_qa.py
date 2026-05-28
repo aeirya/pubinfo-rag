@@ -4,7 +4,7 @@ from itertools import product
 from pubinfo.dataset.load import load_data
 from pubinfo.dataset.publication import load_db
 from pubinfo.experiments.qa import run_qa_grid, save_report
-from pubinfo.pipelines.qarag import QAConfig
+from pubinfo.pipelines.qarag.config import QAConfig
 from pubinfo.retrieval.config import RetrievalConfig
 
 

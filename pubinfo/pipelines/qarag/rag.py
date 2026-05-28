@@ -1,10 +1,16 @@
+from typing import Protocol
+
 from pubinfo.retrieval import Retriever
-from pubinfo.typing import Model
 
 from pubinfo.retrieval import SearchResult
 
+
+class Generator(Protocol):
+    def __call__(self, *, query: str, documents: str) -> str: ...
+
+
 class RAG:
-    def __init__(self, retriever: Retriever, generate: Model):
+    def __init__(self, retriever: Retriever, generate: Generator):
         self.retriever = retriever
         self.generate = generate
 

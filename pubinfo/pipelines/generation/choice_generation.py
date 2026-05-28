@@ -1,6 +1,6 @@
 from typing import Literal
 import outlines
-from pubinfo import template
+from pubinfo import prompts
 
 
 Choice = Literal["A", "B", "C", "D"]
@@ -13,7 +13,7 @@ def build_choice_generator(
     backend: str = "ollama",
 ):
     if prompt_template is None:
-        prompt_template = template.default()
+        prompt_template = prompts.default()
 
     if backend != "ollama":
         raise ValueError(f"Unsupported backend: {backend}")

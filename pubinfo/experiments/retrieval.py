@@ -8,7 +8,7 @@ from pubinfo.evaluate.retrieval import evaluate_retrieval
 from pubinfo.experiments.qa import gold_ids_from_test
 from pubinfo.retrieval.config import RetrievalConfig
 from pubinfo.retrieval.factory import build_retriever_from_config
-from pubinfo.template.format import format_mcq
+from pubinfo.prompts.format import format_mcq
 
 
 def config_metadata(config: RetrievalConfig) -> dict:

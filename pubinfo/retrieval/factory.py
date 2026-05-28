@@ -23,7 +23,7 @@ def build_retriever(
     config = RetrievalConfig(
         kind=kind,
         k=k,
-        columns=columns,
+        columns=columns or "default",
         bm25_k=bm25_k,
         dense_k=dense_k,
         rrf_k=rrf_k,

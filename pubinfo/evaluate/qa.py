@@ -1,6 +1,7 @@
+from collections.abc import Callable
+
 from pandas import DataFrame
 from pubinfo.util import format_question
-from pubinfo.typing import QAModel
 from pubinfo.evaluate import metrics
 
 
@@ -12,7 +13,7 @@ def exact_answer_match(output: dict, test: dict):
 
 def evaluate_qa(
     tests: DataFrame,
-    model: QAModel,
+    model: Callable[[str], dict],
     validate = exact_answer_match,
     verbose = False,
     score_fn = 'count',

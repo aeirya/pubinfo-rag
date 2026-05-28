@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 import pandas as pd
-from pubinfo.template.format import rows_to_context
+from pubinfo.prompts.format import rows_to_context
 from pubinfo.retrieval.config import resolve_columns
 from pubinfo.retrieval.factory import build_retriever
 

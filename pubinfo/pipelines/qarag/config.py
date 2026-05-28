@@ -1,30 +1,28 @@
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Literal
 
-from pubinfo import template
+from pubinfo import prompts
 from pubinfo.retrieval.config import RetrievalConfig
-from pubinfo.typing import GenerationMode
+
+
+GenerationMode = Literal["constrained", "text", "choice"]
 
 
 @dataclass
 class QAConfig:
-    k: int = 5
-    prompt: str = 'qa1'
+    k: int
+    prompt: str
+    columns: str | list[str] | None
     retrieval: RetrievalConfig | None = None
-    
-    columns: str = 'default'
-    verbose: bool = False
-    
-    column_list: list[str] = field(default_factory=list)
     prediction_mode: GenerationMode = "choice"
-    
     model: str | None = None
     model_args: dict[str, Any] = field(default_factory=dict)
-    backend: str = 'server'
+    backend: str = "server"
+    verbose: bool = False
 
     def generation_args(self) -> dict[str, Any]:
         args = {
-            "template": template.load(self.prompt),
+            "template": prompts.load(self.prompt),
             "backend": self.backend,
             **self.model_args,
         }
@@ -34,7 +32,7 @@ class QAConfig:
 
     def retrieval_config(self) -> RetrievalConfig:
         if self.retrieval is None:
-            return RetrievalConfig(k=self.k, columns=self.columns)
+            return RetrievalConfig(kind="hybrid", k=self.k, columns=self.columns)
 
         config = self.retrieval
         config.k = self.k

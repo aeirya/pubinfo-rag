@@ -1,7 +1,7 @@
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from pandas import DataFrame
-from .include import doc_ids, make_documents 
+from .documents import doc_ids, make_documents
 
 
 def build(

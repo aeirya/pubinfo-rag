@@ -3,7 +3,7 @@ from pandas import DataFrame
 from langchain_community.retrievers import BM25Retriever
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from .include import doc_ids, make_documents
+from .documents import doc_ids, make_documents
 
 
 def chunk_documents(documents: list[Document], chunk_size: int, chunk_overlap: int):

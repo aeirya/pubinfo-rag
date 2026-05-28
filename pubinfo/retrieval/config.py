@@ -33,9 +33,9 @@ RETRIEVAL_ALIASES = {
 
 @dataclass
 class RetrievalConfig:
-    kind: RetrievalKind = "hybrid"
-    k: int = 10
-    columns: str | list[str] | None = "default"
+    kind: RetrievalKind
+    k: int
+    columns: str | list[str] | None
     bm25_k: int | None = None
     dense_k: int | None = None
     rrf_k: int | None = None

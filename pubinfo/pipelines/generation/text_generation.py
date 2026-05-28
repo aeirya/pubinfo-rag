@@ -1,5 +1,5 @@
 from langchain_core.prompts import PromptTemplate
-from pubinfo import template as template_loader
+from pubinfo import prompts
 from pubinfo.models import ollama
 from pubinfo.util import formatted_print
 
@@ -37,7 +37,7 @@ def build_text_generator(template=None, model=None, verbose=False, model_args=No
     model_args = model_args or {}
 
     if template is None:
-        template = template_loader.default()
+        template = prompts.default()
 
     if verbose:
         print("template:")

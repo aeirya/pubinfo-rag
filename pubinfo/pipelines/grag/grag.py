@@ -1,7 +1,11 @@
 import random
+from typing import Protocol
 
 from pubinfo.retrieval import Retriever, SearchResult
-from pubinfo.typing import Model
+
+
+class Generator(Protocol):
+    def __call__(self, *, query: str, documents: str) -> str: ...
 
 
 class GRetriever:
@@ -49,7 +53,7 @@ class GRetriever:
     
     
 class GRag:
-    def __init__(self, retriever: Retriever, generate: Model):
+    def __init__(self, retriever: Retriever, generate: Generator):
         self.retriever = GRetriever(retriever)
         self.generate = generate
         
@@ -63,4 +67,3 @@ class GRag:
             "answer": answer,
             "retrieved_ids": result.ids,
         }
-        

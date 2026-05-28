@@ -1,5 +1,8 @@
 
-from pubinfo.typing import GenerationMode
+from typing import Literal
+
+
+GenerationMode = Literal["constrained", "text", "choice"]
 
 
 def build_generator(
