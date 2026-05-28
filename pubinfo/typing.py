@@ -1,7 +1,6 @@
-from typing import Callable
-from pandas import DataFrame
-from typing import Protocol
+from typing import Callable, Literal, Protocol
 
+from pandas import DataFrame
 
 LLM = Callable[[str], str]
 
@@ -13,3 +12,5 @@ Question = dict[str,str]
 
 class Model(Protocol):
     def __call__(self, *, query: str, documents: str) -> str: ...
+    
+GenerationMode = Literal['constrained', 'text', 'choice']

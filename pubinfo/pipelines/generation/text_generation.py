@@ -1,6 +1,7 @@
 from langchain_core.prompts import PromptTemplate
-import pubinfo as pb
-from pubinfo.util import format_question, formatted_print
+from pubinfo import template as template_loader
+from pubinfo.models import ollama
+from pubinfo.util import formatted_print
 
 
 def predictor(chain, verbose=False):
@@ -19,22 +20,24 @@ def predictor(chain, verbose=False):
         
         out = chain.invoke(inputs).strip()
         
-        if verbose or True:
+        if verbose:
             print("OUTPUT:", out)
         
         return out
         
     return predict
 
-def build_text_generator(template=None, model=None, verbose=False, model_args={}):
+def build_text_generator(template=None, model=None, verbose=False, model_args=None):
     ''' 
         Example:
         generate = build_generator(template='rerank', model="gemma2:2b", top_k=20, top_p=0.8)
         answer = generate(query="...", documents="...")
     '''
 
+    model_args = model_args or {}
+
     if template is None:
-        template = pb.prompt.default()
+        template = template_loader.default()
 
     if verbose:
         print("template:")
@@ -45,7 +48,7 @@ def build_text_generator(template=None, model=None, verbose=False, model_args={}
         model = ollama.init(model=model, **model_args) 
         
     if model is None:
-        model = pb.ollama.init_model()
+        model = ollama.init(**model_args)
         
     prompt = PromptTemplate.from_template(template)
     chain = prompt | model

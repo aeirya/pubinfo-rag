@@ -12,7 +12,7 @@ class GRetriever:
 
         self.retriever = retriever
         self.k = self.retriever.k
-        self.rng = random.Random(seed=42)
+        self.rng = random.Random(42)
         
     def _sample_items(self, items: list[int], n: int):
         if len(items) <= n:

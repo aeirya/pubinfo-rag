@@ -26,6 +26,14 @@ def model_args_list():
             'num_predict': 256,
         }
     ]
+    
+IRS = [
+    "semantic", "tfidf", "hybrid"
+]
+
+RETRIEVAL_SCENARIOS = [
+    "no-rag", "normal", "guided"
+]
 
 def limit_options():
     pass

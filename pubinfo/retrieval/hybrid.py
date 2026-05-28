@@ -1,4 +1,5 @@
-from pubinfo.retrieval import build_bm25, build_dense
+from pubinfo.retrieval.bm25 import build as build_bm25
+from pubinfo.retrieval.dense import build as build_dense
 
 
 def rrf_merge(rankings, rrf_k=60):

@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 import pandas as pd
 from pubinfo.template.format import rows_to_context
-from pubinfo.retrieval import build_retriever
+from pubinfo.retrieval.config import resolve_columns
+from pubinfo.retrieval.factory import build_retriever
 
 
 @dataclass
@@ -11,11 +12,17 @@ class SearchResult:
 
 
 class Retriever:
-    def __init__(self, df: pd.DataFrame, k: int = 4, columns: list|str = None):
+    def __init__(
+        self,
+        df: pd.DataFrame,
+        k: int = 4,
+        columns: list | str | None = None,
+        retrieve_ids=None,
+    ):
         self.df = df
         self.k = k
-        self.columns = columns
-        self._retrieve_ids = build_retriever(df, k=k, columns=columns)
+        self.columns = resolve_columns(columns)
+        self._retrieve_ids = retrieve_ids or build_retriever(df, k=k, columns=columns)
 
     def ids(self, query: str) -> list:
         return self._retrieve_ids(query)
