@@ -5,4 +5,15 @@ from .hybrid import build as build_hybrid
 from .hybrid import merge
 from .factory import build_retriever
 
-from .base import Retriever
+from .base import Retriever, SearchResult
+
+__all__ = [
+    "build_df_retriver",
+    "build_bm25",
+    "build_dense",
+    "build_hybrid",
+    "merge",
+    "build_retriever",
+    "Retriever",
+    "SearchResult"
+]
