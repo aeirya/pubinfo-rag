@@ -1,68 +1,104 @@
 from pandas import DataFrame
-from pubinfo.retrieval.bm25 import build as build_bm25
+
 from pubinfo.retrieval.config import (
-    RetrievalConfig,
     canonical_kind,
     resolve_columns,
 )
-from pubinfo.retrieval.dense import build as build_dense
-from pubinfo.retrieval.hybrid import build as build_hybrid
+
+from .cache import build_cached_bm25, build_cached_dense
+from .impl import bm25, dense
+
 
 def build_retriever(
-    df: DataFrame, 
-    k=10,
-    columns: str | list[str] | None = None,
-    bm_cols: str | list[str] | None = None,
-    dense_cols: str | list[str] | None = None,
+    df: DataFrame,
     kind: str = "hybrid",
+    columns: str | list[str] | None = "default",
+    k: int = 10,
     bm25_k: int | None = None,
     dense_k: int | None = None,
     rrf_k: int | None = None,
     dense_model: str = "BAAI/bge-base-en-v1.5",
+    rebuild: bool = False,
+    use_cache: bool = True,
 ):
-    config = RetrievalConfig(
-        kind=kind,
-        k=k,
-        columns=columns or "default",
-        bm25_k=bm25_k,
-        dense_k=dense_k,
-        rrf_k=rrf_k,
-        bm25_columns=bm_cols,
-        dense_columns=dense_cols,
-        dense_model=dense_model,
-    )
-    return build_retriever_from_config(df, config)
+    kind = canonical_kind(kind)
 
+    corpus = columns if isinstance(columns, str) else "custom"
+    resolved_columns = resolve_columns(columns)
 
-def build_retriever_from_config(df: DataFrame, config: RetrievalConfig):
-    kind = canonical_kind(config.kind)
-    columns = resolve_columns(config.columns)
-    bm_cols = resolve_columns(config.bm25_columns)
-    dense_cols = resolve_columns(config.dense_columns)
+    if not use_cache:
+        if kind == "bm25":
+            return bm25.build(df, k=k, columns=resolved_columns)
 
-    if columns is not None:
-        bm_cols = dense_cols = columns
+        if kind == "dense":
+            return dense.build(
+                df,
+                k=k,
+                columns=resolved_columns,
+                model_name=dense_model,
+            )
+
+        if kind == "hybrid":
+            bm = bm25.build(
+                df,
+                k=bm25_k or k,
+                columns=resolved_columns,
+            )
+            de = dense.build(
+                df,
+                k=dense_k or k,
+                columns=resolved_columns,
+                model_name=dense_model,
+            )
+            return hybrid.merge(
+                bm,
+                de,
+                top_k=k,
+                rrf_k=rrf_k or 3 * k,
+            )
 
     if kind == "bm25":
-        return build_bm25(df, k=config.k, columns=bm_cols)
-
-    if kind == "dense":
-        return build_dense(
-            df,
-            k=config.k,
-            columns=dense_cols,
-            model_name=config.dense_model,
+        return build_cached_bm25(
+            df=df,
+            corpus=corpus,
+            columns=resolved_columns,
+            k=k,
+            rebuild=rebuild,
         )
 
-    if kind != "hybrid":
-        raise ValueError(f"Unknown retriever kind: {config.kind!r}")
+    if kind == "dense":
+        return build_cached_dense(
+            df=df,
+            corpus=corpus,
+            columns=resolved_columns,
+            k=k,
+            model_name=dense_model,
+            rebuild=rebuild,
+        )
 
-    return build_hybrid(
-        df, 
-        k=config.k,
-        bm25_k=config.bm25_k or config.k,
-        faiss_k=config.dense_k or config.k,
-        rrf_k=config.rrf_k or 3 * config.k,
-        bm25_cols=bm_cols,
-        faiss_cols=dense_cols,
-    )
+    if kind == "hybrid":
+        bm = build_cached_bm25(
+            df=df,
+            corpus=corpus,
+            columns=resolved_columns,
+            k=bm25_k or k,
+            rebuild=rebuild,
+        )
+
+        de = build_cached_dense(
+            df=df,
+            corpus=corpus,
+            columns=resolved_columns,
+            k=dense_k or k,
+            model_name=dense_model,
+            rebuild=rebuild,
+        )
+
+        return hybrid.merge(
+            bm,
+            de,
+            top_k=k,
+            rrf_k=rrf_k or 3 * k,
+        )
+
+    raise ValueError(f"Unknown retriever kind: {kind!r}")

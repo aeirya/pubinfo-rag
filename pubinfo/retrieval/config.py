@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from typing import Literal
 
-
 RetrievalKind = Literal["bm25", "dense", "hybrid", "tfidf", "semantic"]
 
 DEFAULT_COLUMNS = [
@@ -22,6 +21,7 @@ DEFAULT_COLUMNS_NO_ABSTRACT = [
 
 COLUMN_PRESETS = {
     "default": DEFAULT_COLUMNS,
+    "with_abstract": DEFAULT_COLUMNS,
     "no_abstract": DEFAULT_COLUMNS_NO_ABSTRACT,
 }
 
